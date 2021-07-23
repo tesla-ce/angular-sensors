@@ -1,0 +1,13 @@
+{
+  "name": "@tesla-ce/sensors",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^9.1.7",
+    "@angular/core": "^9.1.7"
+  },
+  "dependencies": {
+    "tslib": "^1.10.0"
+  },
+  "licence": "AGPLv3",
+  "author": "Roger Muñoz Bernaus <rmunoz@uoc.edu>"
+}
