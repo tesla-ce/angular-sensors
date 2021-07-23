@@ -19,7 +19,7 @@ jobs:
       - name: Get version values
         id: vars
         run: |
-          echo ::set-output name=version::$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' projects/tesla-ce/icons/package.json)
+          echo ::set-output name=version::$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' projects/tesla-ce/sensors/package.json)
           echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Show captured versions
         run: |
@@ -85,7 +85,7 @@ jobs:
       - name: Get version values
         id: vars
         run: |
-          echo ::set-output name=version::$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' projects/tesla-ce/icons/package.json)
+          echo ::set-output name=version::$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' projects/tesla-ce/sensors/package.json)
           echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Build and publish
         if: github.event_name == 'release'
