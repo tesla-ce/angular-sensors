@@ -55,7 +55,6 @@ jobs:
           files: ./coverage/tesla-ce/icons/index.html
       - name: Fossa update license analysis
         uses: fossa-contrib/fossa-action@v1
-        continue-on-error: true
         with:
           fossa-api-key: ${{ secrets.FOSSA_API_KEY }}
   sonar:
