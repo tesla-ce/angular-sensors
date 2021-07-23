@@ -1,10 +1,9 @@
+[![npm version](https://badge.fury.io/js/%40tesla-ce%2Fsensors.svg)](https://badge.fury.io/js/%40tesla-ce%2Fsensors)
 [![codecov](https://codecov.io/gh/tesla-ce/angular-sensors/branch/master/graph/badge.svg?token=TcHijQbFrJ)](https://codecov.io/gh/tesla-ce/angular-sensors)
 [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B26246%2Fgithub.com%2Ftesla-ce%2Fangular-sensors.svg?type=shield)](https://app.fossa.com/projects/custom%2B26246%2Fgithub.com%2Ftesla-ce%2Fangular-sensors?ref=badge_shield)
 
 [![Quality gate](https://sonar.sunai.uoc.edu/api/project_badges/quality_gate?project=angular-sensors)](https://sonar.sunai.uoc.edu/dashboard?id=angular-sensors)
-
-[![NPM](https://nodei.co/npm/@tesla-ce/sensors.png)](https://npmjs.org/package/@tesla-ce/sensors)
 
 # TeSLA CE Angular sensors package
 
