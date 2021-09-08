@@ -3,6 +3,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {SensorWebcamService} from './sensor-webcam.service';
 import {SensorCapturedData, SensorCode, SensorEvent, SensorStatusValue} from './sensor.interfaces';
 import {SensorKeyboardService} from './sensor-keyboard.service';
+import {DOCUMENT} from "@angular/common";
 
 
 export interface StatusSummary {
@@ -32,8 +33,10 @@ export class SensorsService {
 
   // TODO: observable
   private networkQuality = null;
+  private document: HTMLDocument;
 
-  constructor() {
+  constructor(@Inject(DOCUMENT) document: HTMLDocument) {
+    this.document = document;
   }
 
   public enableSensors(enabled: Array<SensorCode>): void {
@@ -44,7 +47,7 @@ export class SensorsService {
     }
 
     if (this.enabledSensors.includes('camera') || this.enabledSensors.includes('microphone')) {
-      this.webcam = new SensorWebcamService();
+      this.webcam = new SensorWebcamService(this.document);
       this.webcam.enableSensors(this.enabledSensors);
       if (this.enabledSensors.includes('camera')) {
         this.currentStatus.camera = SensorStatusValue.unknown;

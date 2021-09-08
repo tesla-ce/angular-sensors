@@ -1,7 +1,8 @@
-import {Injectable} from '@angular/core';
+import {ElementRef, Injectable, ViewChild, ViewChildren} from '@angular/core';
 import {Subscription, timer} from 'rxjs';
 import {MultiSensor, SensorStatusValue} from './sensor.interfaces';
 import {BlackImageWorker} from './black-image.worker';
+import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +32,12 @@ export class SensorWebcamService extends MultiSensor {
   private inAudioFragment = false;
   private workersAvailaible = true;
 
-  constructor() {
+  constructor(private document: HTMLDocument) {
     super();
+    console.log(document);
+    console.log(document.getElementById('webcamSensorCanvas'));
 
+    console.log(document.getElementById('webcamVideo'));
     this.codes = ['camera', 'microphone'];
 
     this.canvas = document.getElementById('webcamSensorCanvas');
