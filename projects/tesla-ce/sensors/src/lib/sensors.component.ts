@@ -1,5 +1,6 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChildren} from '@angular/core';
 import {SensorsService} from './sensors.service';
+import {DOCUMENT} from "@angular/common";
 
 /** @dynamic */
 @Component({
@@ -12,17 +13,24 @@ import {SensorsService} from './sensors.service';
 export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
   public canvasWidth = 640;
   public canvasHeight = 480;
-
-  constructor(@Inject(SensorsService) private sensorService: SensorsService) {
+  @ViewChildren('webcamSensorCanvas') canvas;
+  @ViewChildren('webcamAudio') audio;
+  @ViewChildren('webcamVideo') video;
+  constructor(private sensorService: SensorsService, @Inject(DOCUMENT) document: Document) {
   }
 
   public ngOnInit(): void {
-    this.sensorService.enableSensors(['camera'])
 
   }
 
   public ngAfterViewInit(): void {
+    this.sensorService.setCanvas(this.canvas);
+    this.sensorService.setVideo(this.video);
+    this.sensorService.setAudio(this.audio);
+
+    this.sensorService.enableSensors(['camera'])
     this.sensorService.start();
+
   }
 
   public ngOnDestroy(): void {

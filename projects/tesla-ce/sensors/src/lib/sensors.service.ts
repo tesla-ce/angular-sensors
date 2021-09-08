@@ -35,8 +35,23 @@ export class SensorsService {
   private networkQuality = null;
   private document: HTMLDocument;
 
-  constructor(@Inject(DOCUMENT) document: HTMLDocument) {
-    this.document = document;
+  private canvas;
+  private video;
+  private audio;
+
+  constructor() {
+  }
+
+  public setCanvas(canvas) {
+    this.canvas = canvas.first;
+  }
+
+  public setAudio(audio) {
+    this.audio = audio.first;
+  }
+
+  public setVideo(video) {
+    this.video = video.first;
   }
 
   public enableSensors(enabled: Array<SensorCode>): void {
@@ -47,7 +62,8 @@ export class SensorsService {
     }
 
     if (this.enabledSensors.includes('camera') || this.enabledSensors.includes('microphone')) {
-      this.webcam = new SensorWebcamService(this.document);
+      this.webcam = new SensorWebcamService();
+      this.webcam.setupDOMElements(this.audio, this.canvas, this.video);
       this.webcam.enableSensors(this.enabledSensors);
       if (this.enabledSensors.includes('camera')) {
         this.currentStatus.camera = SensorStatusValue.unknown;

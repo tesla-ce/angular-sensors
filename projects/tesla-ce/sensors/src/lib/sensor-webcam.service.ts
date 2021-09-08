@@ -2,7 +2,6 @@ import {ElementRef, Injectable, ViewChild, ViewChildren} from '@angular/core';
 import {Subscription, timer} from 'rxjs';
 import {MultiSensor, SensorStatusValue} from './sensor.interfaces';
 import {BlackImageWorker} from './black-image.worker';
-import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +15,11 @@ export class SensorWebcamService extends MultiSensor {
   timeBetweenAudios = 30000;
   timeAudioSample = 12000;
   result = 0;
+
   canvas = null;
   video = null;
   audio = null;
+
   audioLabel = null;
   audioBuffer = {
     recording: false,
@@ -32,17 +33,16 @@ export class SensorWebcamService extends MultiSensor {
   private inAudioFragment = false;
   private workersAvailaible = true;
 
-  constructor(private document: HTMLDocument) {
+  constructor() {
     super();
-    console.log(document);
-    console.log(document.getElementById('webcamSensorCanvas'));
 
-    console.log(document.getElementById('webcamVideo'));
     this.codes = ['camera', 'microphone'];
 
+    /*
     this.canvas = document.getElementById('webcamSensorCanvas');
     this.video = document.getElementById('webcamVideo');
     this.audio = document.getElementById('webcamAudio');
+    */
     // https://blog.logrocket.com/how-to-execute-a-function-with-a-web-worker-on-a-different-thread-in-angular/
     if (typeof Worker !== 'undefined') {
       // Create a new
@@ -86,15 +86,21 @@ export class SensorWebcamService extends MultiSensor {
     });
   }
 
+  public setupDOMElements(audio, canvas, video): void {
+    this.audio = audio;
+    this.canvas = canvas;
+    this.video = video;
+  }
+
   private takePicture(): void {
-    const canvasContext = this.canvas.getContext('2d');
+    const canvasContext = this.canvas.nativeElement.getContext('2d');
     // check black image & send or alert
-    const wTc = this.canvas.width;
-    const hTc = this.canvas.height;
-    canvasContext.drawImage(this.video, 0, 0, wTc, hTc);
+    const wTc = this.canvas.nativeElement.width;
+    const hTc = this.canvas.nativeElement.height;
+    canvasContext.drawImage(this.video.nativeElement, 0, 0, wTc, hTc);
 
     const mimeType = 'image/jpeg';
-    const data64 = this.canvas.toDataURL(mimeType);
+    const data64 = this.canvas.nativeElement.toDataURL(mimeType);
 
     const context = {
       webcam: this.videoLabel,
@@ -183,9 +189,9 @@ export class SensorWebcamService extends MultiSensor {
     navigator.mediaDevices.getUserMedia(constrains).then( stream => {
         if (constrains.video === true) {
           this.videoLabel = stream.getVideoTracks()[0].label;
-          this.video.srcObject = stream;
-          this.video.muted = true;
-          this.video.play();
+          this.video.nativeElement.srcObject = stream;
+          this.video.nativeElement.muted = true;
+          this.video.nativeElement.play();
         }
 
         if (constrains.audio === true) {
@@ -262,7 +268,7 @@ export class SensorWebcamService extends MultiSensor {
       });
 
     // Add a listener to detect when the video is ready to start capturing
-    this.video.addEventListener('canplay', ev => {
+    this.video.nativeElement.addEventListener('canplay', ev => {
       if (!this.videoReady) {
         this.videoReady = true;
 
