@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChildren} from '@angular/core';
 import {SensorsService} from './sensors.service';
 import {DOCUMENT} from "@angular/common";
+import {SensorConfig} from "./sensor.interfaces";
+
 
 /** @dynamic */
 @Component({
@@ -28,7 +30,14 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensorService.setVideo(this.video);
     this.sensorService.setAudio(this.audio);
 
-    this.sensorService.enableSensors(['camera'])
+    this.sensorService.enableSensors(['camera']);
+
+    let config = [];
+    config.push({
+      key: "timeBetweenPictures",
+      value: 3000
+    });
+    this.sensorService.setConfiguration(config);
     this.sensorService.start();
 
   }

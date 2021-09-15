@@ -132,7 +132,12 @@ export class SensorsService {
     }
   }
 
-  public setConfiguration() {
-    // todo define configurations
+  public setConfiguration(config) {
+    if (this.webcam) {
+      this.webcam.setConfig(config);
+    }
+    if (this.keyboard) {
+      this.keyboard.setConfig(config);
+    }
   }
 }

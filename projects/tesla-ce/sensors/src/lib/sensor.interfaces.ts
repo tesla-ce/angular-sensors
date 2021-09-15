@@ -68,8 +68,8 @@ export abstract class Sensor {
     this.status.next(Object.assign({}, {sensor: this.getCode(), status}));
   }
 
-  protected setConfig(config: Array<SensorConfig>) {
-    this.config.next(Object.assign({}, config));
+  public setConfig(config: Array<SensorConfig>) {
+    this.config.next(Object.assign([] , config));
   }
 
   protected newSample(b64data: string, mimeType: string, context?: any) {
@@ -123,8 +123,8 @@ export abstract class MultiSensor {
     this.status.next(Object.assign({}, {sensor, status}));
   }
 
-  protected setConfig(config: Array<SensorConfig>) {
-    this.config.next(Object.assign({}, config));
+  public setConfig(config: Array<SensorConfig>) {
+    this.config.next(Object.assign([], config));
   }
 
   protected newSample(sensor: SensorCode, b64data: string, mimeType: string, context?: any) {
