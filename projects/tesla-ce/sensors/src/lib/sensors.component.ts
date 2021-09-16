@@ -29,7 +29,8 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensorService.setCanvas(this.canvas);
     this.sensorService.setVideo(this.video);
     this.sensorService.setAudio(this.audio);
-
+    this.video.first.nativeElement.style.display = 'block';
+    this.canvas.first.nativeElement.style.display = 'block';
     this.sensorService.enableSensors(['camera']);
 
     let config = [];
@@ -38,8 +39,15 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
       value: 3000
     });
     this.sensorService.setConfiguration(config);
-    this.sensorService.start();
+    // this.sensorService.start();
+  }
 
+  stop() {
+    this.sensorService.stop();
+  }
+
+  start() {
+    this.sensorService.start();
   }
 
   public ngOnDestroy(): void {

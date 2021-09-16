@@ -168,6 +168,7 @@ export class SensorWebcamService extends MultiSensor {
     super.stop();
     if (this.enabledSensors.includes('camera')) {
       this.cameraTimer.unsubscribe();
+      this.videoReady = false;
       this.setStatus('camera', SensorStatusValue.error);
     }
     if (this.enabledSensors.includes('microphone')) {
