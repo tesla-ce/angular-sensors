@@ -31,7 +31,7 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensorService.setAudio(this.audio);
     this.video.first.nativeElement.style.display = 'block';
     this.canvas.first.nativeElement.style.display = 'block';
-    this.sensorService.enableSensors(['camera']);
+    this.sensorService.enableSensors(['keyboard']);
 
     let config = [];
     config.push({

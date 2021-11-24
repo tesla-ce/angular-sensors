@@ -23,7 +23,13 @@ export class SensorKeyboardService extends Sensor {
   private subscriptionDown: Subscription;
   private recording: boolean;
   private buffer: Array<{}>;
-  private MAX_REPEATS = 125;
+  private DWELL = 1;
+  private FLIGHT = 2;
+  private DIGRAPH = 3;
+  private TRIGRAPH = 4;
+  private FOURGRAPH = 5;
+  private features = {"features": []};
+  private MAX_BUFFER_LENGTH = 50;
 
   constructor() {
     super();
@@ -37,7 +43,7 @@ export class SensorKeyboardService extends Sensor {
   }
 
   public start() {
-    console.log('Start keyboard recording');
+    // console.log('Start keyboard recording');
     this.recording = true;
 
     // locale browser
@@ -81,7 +87,7 @@ export class SensorKeyboardService extends Sensor {
     if (this.recording !== true) {
       return;
     }
-    console.log(ev);
+
     const aux = {
       key: ev.key,
       code: ev.code,
@@ -91,76 +97,112 @@ export class SensorKeyboardService extends Sensor {
 
     this.buffer.push(aux);
     // console.log('buffer length: ' + this.buffer.length);
-
-    if (this.buffer.length >= 250) {
+    // are there sufficient events?
+    if (this.buffer.length >= this.MAX_BUFFER_LENGTH) {
       const context = {};
       console.log('Keyboard service: send buffer');
-      this.newSample(JSON.stringify(this.buffer), 'plain/text', context);
-      this.buffer = [];
+
+      // create features and send data
+      this.constructFeatures();
+      this.newSample(JSON.stringify(this.features), 'plain/text', context);
     }
-    /*
-    // validate key
-    const keyChar = this.keyboard.getCharacter(ev.key, ev.shiftKey);
-    if (this.keyboard.isValidKey(keyChar) !== true &&
-      this.keyboard.isValidKey(keyChar.toLowerCase()) !== true) {
-      return;
-    }
-
-    // validate event
-    if (this.validateEvent(keyChar, ev) === false) {
-      return;
-    }
-
-    // put inside buffer
-    if (this.buffer[ev.type][keyChar] === undefined) {
-      this.buffer[ev.type][keyChar] = [];
-    }
-
-    if (this.buffer[ev.type][keyChar].length >= this.MAX_REPEATS) {
-      console.log(`${ev.key} was discarted. MAX_REPEATS.`);
-      return;
-    }
-
-    this.buffer[ev.type][keyChar].push(ev);
-    console.log(`${ev.key} is valid`);
-    // are there sufficient events?
-
-    // create features and send data
-    */
-
   }
-  /*
-  private validateEvent(keyChar, ev) {
-    // remove ctrl, alt and shift events
-    if (ev.ctrlKey === true || ev.altKey === true || keyChar === 'shift') {
-      return false;
-    }
 
-    // control more than 1 space
-    if (keyChar === 'space') {
-      if (ev.type === 'keydown') {
-        if (this.lastDownWasSpace === true) {
-          return false;
-        } else {
-          this.lastDownWasSpace = true;
-        }
-      } else if(ev.type === 'keyup') {
-        if (this.lastUpWasSpace === true) {
-          return false;
-        } else {
-          this.lastUpWasSpace = true;
-        }
+  private constructFeatures() {
+    const auxBuffer = this.buffer;
+    this.buffer = [];
+
+    let auxDwell = {};
+    let auxFlight = {};
+    let auxKeyBuffer = {"keyup": [], "keydown": []};
+
+    // process DWELL
+    for(let i=0; i < auxBuffer.length; i++) {
+      const row = auxBuffer[i];
+      if ((auxDwell[row['code']] === undefined || Object.keys(auxDwell[row['code']]).length === 0) && row['type'] === 'keydown') {
+        auxDwell[row['code']] = {};
+        auxDwell[row['code']]['keydown'] = row['timestamp'];
+      }
+
+      if (auxDwell[row['code']] !== undefined && row['type'] === 'keyup') {
+        const auxFeature = {
+          'code': row['code'],
+          'type': this.DWELL,
+          'time': row['timestamp'] - auxDwell[row['code']]['keydown']
+        };
+        this.features.features.push(auxFeature);
+        auxDwell[row['code']] = {};
       }
     }
 
-    if (ev.type === 'keydown' && keyChar !== 'space') {
-      this.lastDownWasSpace = false;
-    }
-    if (ev.type === 'keyup' && keyChar !== 'space') {
-      this.lastDownWasSpace = false;
+    // process FLIGHT
+    for(let i=0; i < auxBuffer.length; i++) {
+      const row = auxBuffer[i];
+
+      if (row['type'] === 'keyup') {
+        auxFlight = {
+          'code': row['code'],
+          'type': this.FLIGHT,
+          'time': row['timestamp']
+        };
+      }
+
+      if (row['type'] === 'keydown' && Object.keys(auxFlight).length != 0 && auxFlight['code'] !== row['code']) {
+        auxFlight = {
+          'code': auxFlight['code']+'___'+row['code'],
+          'type': this.FLIGHT,
+          'time': row['timestamp'] - auxFlight['time']
+        };
+        this.features.features.push(auxFlight);
+        auxFlight = {};
+      }
     }
 
-    return true;
+    // separate events inside two buffers
+    for(let i=0; i < auxBuffer.length; i++) {
+      const row = auxBuffer[i];
+      auxKeyBuffer[row['type']].push({"code": row['code'], "timestamp": row['timestamp']});
+    }
+
+    // process DIGRAPH
+    this.processXGraph(auxKeyBuffer, 1);
+
+    // process TRIGRAPH
+    this.processXGraph(auxKeyBuffer, 2);
+
+    // process FOURGRAPH
+    this.processXGraph(auxKeyBuffer, 3);
   }
-  */
+
+  private processXGraph(auxKeyBuffer, idx) {
+    let aux_type = null;
+
+    switch(idx) {
+      case 1:
+        aux_type = this.DIGRAPH;
+        break;
+      case 2:
+        aux_type = this.TRIGRAPH;
+        break;
+      case 3:
+        aux_type = this.FOURGRAPH;
+        break;
+    }
+
+    for(let i=0; i < auxKeyBuffer['keydown'].length; i++) {
+      const row_down = auxKeyBuffer['keydown'][i];
+
+      if (auxKeyBuffer['keyup'][i+idx] === undefined) {
+        break;
+      }
+      const row_up = auxKeyBuffer['keyup'][i+idx];
+
+      const auxFeature = {
+        'code': row_down['code']+'___'+row_up['code'],
+        'type': aux_type,
+        'time': row_up['timestamp'] - row_down['timestamp']
+      };
+      this.features.features.push(auxFeature);
+    }
+  }
 }
