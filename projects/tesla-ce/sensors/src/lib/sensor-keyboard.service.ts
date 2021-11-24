@@ -104,8 +104,8 @@ export class SensorKeyboardService extends Sensor {
 
       // create features and send data
       this.constructFeatures();
-      const data_b64 = btoa(JSON.stringify(this.features))
-      this.newSample(data_b64, 'plain/text', context);
+      const data_b64 = 'data:text/plain;base64,'+btoa(JSON.stringify(this.features));
+      this.newSample(data_b64, 'text/plain', context);
     }
   }
 
