@@ -29,7 +29,7 @@ export class SensorKeyboardService extends Sensor {
   private TRIGRAPH = 4;
   private FOURGRAPH = 5;
   private features = {"features": []};
-  private MAX_BUFFER_LENGTH = 50;
+  private MAX_BUFFER_LENGTH = 250;
 
   constructor() {
     super();
