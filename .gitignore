@@ -44,3 +44,4 @@ testem.log
 .DS_Store
 Thumbs.db
 old_code
+projects/tesla-ce/sensors/node_modules/
