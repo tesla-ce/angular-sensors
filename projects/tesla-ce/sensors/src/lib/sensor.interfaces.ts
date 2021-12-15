@@ -37,16 +37,16 @@ export interface SensorConfig {
 }
 
 export abstract class Sensor {
-  private status = new BehaviorSubject<SensorStatus>(null);
+  private status = new BehaviorSubject<SensorStatus>({} as SensorStatus);
   public readonly statusChange = this.status.asObservable();
-  private event = new BehaviorSubject<SensorEvent>(null);
+  private event = new BehaviorSubject<SensorEvent>({} as SensorEvent);
   public readonly eventChange = this.event.asObservable();
   private running = false;
-  protected code: SensorCode;
-  private sample = new BehaviorSubject<SensorCapturedData>(null);
+  protected code: SensorCode = {} as SensorCode;
+  private sample = new BehaviorSubject<SensorCapturedData>({} as SensorCapturedData);
   readonly newData: Observable<SensorCapturedData> = this.sample.asObservable();
 
-  private config = new BehaviorSubject<Array<SensorConfig>>(null);
+  private config = new BehaviorSubject<Array<SensorConfig>>([] as Array<SensorConfig>);
   public readonly configChange = this.config.asObservable();
 
   protected constructor() {
@@ -82,17 +82,17 @@ export abstract class Sensor {
 }
 
 export abstract class MultiSensor {
-  private status = new BehaviorSubject<SensorStatus>(null);
+  private status = new BehaviorSubject<SensorStatus>({} as SensorStatus);
   public readonly statusChange = this.status.asObservable();
-  private event = new BehaviorSubject<SensorEvent>(null);
+  private event = new BehaviorSubject<SensorEvent>({} as SensorEvent);
   public readonly eventChange = this.event.asObservable();
   protected running = false;
-  protected codes: Array<SensorCode>;
-  private sample = new BehaviorSubject<SensorCapturedData>(null);
+  protected codes: Array<SensorCode> = [] as Array<SensorCode>;
+  private sample = new BehaviorSubject<SensorCapturedData>({} as SensorCapturedData);
   readonly newData: Observable<SensorCapturedData> = this.sample.asObservable();
   protected enabledSensors: Array<SensorCode>;
   // protected statusService: WebPluginStatusService;
-  private config = new BehaviorSubject<Array<SensorConfig>>(null);
+  private config = new BehaviorSubject<Array<SensorConfig>>([] as Array<SensorConfig>);
   public readonly configChange = this.config.asObservable();
 
   protected constructor() {

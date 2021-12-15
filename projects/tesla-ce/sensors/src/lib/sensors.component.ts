@@ -15,9 +15,9 @@ import {SensorConfig} from "./sensor.interfaces";
 export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
   public canvasWidth = 640;
   public canvasHeight = 480;
-  @ViewChildren('webcamSensorCanvas') canvas;
-  @ViewChildren('webcamAudio') audio;
-  @ViewChildren('webcamVideo') video;
+  @ViewChildren('webcamSensorCanvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+  @ViewChildren('webcamAudio') audio: ElementRef<HTMLAudioElement> = {} as ElementRef<HTMLAudioElement>;
+  @ViewChildren('webcamVideo') video: ElementRef<HTMLVideoElement> = {} as ElementRef<HTMLVideoElement>;
   constructor(private sensorService: SensorsService, @Inject(DOCUMENT) document: Document) {
   }
 
@@ -29,14 +29,12 @@ export class SensorsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sensorService.setCanvas(this.canvas);
     this.sensorService.setVideo(this.video);
     this.sensorService.setAudio(this.audio);
-    this.video.first.nativeElement.style.display = 'block';
-    this.canvas.first.nativeElement.style.display = 'block';
     this.sensorService.enableSensors(['keyboard']);
 
-    let config = [];
+    let config = [] as Array<SensorConfig>;
     config.push({
       key: "timeBetweenPictures",
-      value: 3000
+      value: "3000"
     });
     this.sensorService.setConfiguration(config);
     // this.sensorService.start();

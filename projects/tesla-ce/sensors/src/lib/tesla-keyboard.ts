@@ -1,3 +1,4 @@
+/*
 export class TeslaKeyboard {
   private keys = [
     "1","2","3","4","5","6","7","8","9","0",
@@ -82,20 +83,20 @@ export class TeslaKeyboard {
     144:"numlock", 145:"scrolllock", 186:";", 187:"=", 188:",", 189:"-", 190:".", 191:"/", 192:"`", 219:"[", 220:"\\", 221:"]", 222:"'"
   };
 
-  private modifiedByShift  = {
+  private modifiedByShift = {
     192:"~", 48:")", 16:"shift", 49:"!", 50:"@", 51:"#", 52:"$", 53:"%", 54:"^", 55:"&", 56:"*", 57:"(", 109:"_", 61:"+",
     219:"{", 221:"}", 220:"|", 59:":", 222:"\"", 188:"<", 189:">", 191:"?",
     96:"insert", 97:"end", 98:"down", 99:"pagedown", 100:"left", 102:"right", 103:"home", 104:"up", 105:"pageup"
   };
 
   // function to get a character (char) of a given keycode (number)
-  public getCharacter = function(keyCode, isModifiedByShift){
+  public getCharacter(keyCode: number, isModifiedByShift: boolean): string {
     if (isModifiedByShift){
-      if(this.modifiedByShift[keyCode]){
+      if(this.modifiedByShift[keyCode] != undefined){
         return this.modifiedByShift[keyCode];
       }
       else {
-        if (this.keyCodeMap[keyCode]) {
+        if (this.keyCodeMap[keyCode] != undefined) {
           var toUpper = this.keyCodeMap[keyCode].toUpperCase();
           return toUpper;
         } else {
@@ -105,12 +106,12 @@ export class TeslaKeyboard {
     }
     else{
       if (this.keyCodeMap[keyCode]) {
-        return this.keyCodeMap[keyCode];
+        return this.keyCodeMap[keyCode] as string;
       } else {
         return ' ';
       }
     }
-  };
+  }
 
   // the list/map of valid keys
   // this is used on the feature extraction phase to filter the valid keys before extracting the features
@@ -164,3 +165,4 @@ export class TeslaKeyboard {
     return this.validKeys[key];
   };
 }
+*/

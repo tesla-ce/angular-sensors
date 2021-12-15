@@ -1,28 +1,20 @@
+import { NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector } from '@angular/core';
-// import { WebPluginModule, WebPluginComponent} from '@tesla-ce/web-plugin';
-// import { WebPluginModule, WebPluginComponent} from '../../projects/tesla-ce/web-plugin/src/public-api';
-import { SensorsModule, SensorsComponent} from '../../projects/tesla-ce/sensors/src/public-api';
-import { createCustomElement } from '@angular/elements';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import {SensorsModule} from "../../projects/tesla-ce/sensors/src/lib/sensors.module";
+import {SensorsComponent} from "../../projects/tesla-ce/sensors/src/lib/sensors.component";
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AppComponent
+  ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     SensorsModule
   ],
-  providers: [],
-  entryComponents: [SensorsComponent],
-  bootstrap: []
+  bootstrap: [AppComponent]
 })
-export class AppModule {
-  constructor(private injector: Injector) { }
-
-  ngDoBootstrap() {
-    const ngElement = createCustomElement(SensorsComponent, {
-      injector: this.injector
-    });
-    customElements.define('tesla-web-plugin', ngElement);
-  }
-
-}
+export class AppModule { }

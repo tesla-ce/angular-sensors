@@ -1,7 +1,7 @@
-import {Inject, Injectable} from '@angular/core';
+import {ElementRef, Inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SensorWebcamService} from './sensor-webcam.service';
-import {SensorCapturedData, SensorCode, SensorEvent, SensorStatusValue} from './sensor.interfaces';
+import {SensorCapturedData, SensorCode, SensorConfig, SensorEvent, SensorStatusValue} from './sensor.interfaces';
 import {SensorKeyboardService} from './sensor-keyboard.service';
 import {DOCUMENT} from "@angular/common";
 
@@ -18,11 +18,11 @@ export interface StatusSummary {
 })
 export class SensorsService {
   private enabledSensors = new Array<SensorCode>();
-  private webcam: SensorWebcamService = null;
-  private keyboard: SensorKeyboardService = null;
-  private sample = new BehaviorSubject<SensorCapturedData>(null);
+  private webcam: SensorWebcamService = {} as SensorWebcamService;
+  private keyboard: SensorKeyboardService = {} as SensorKeyboardService;
+  private sample = new BehaviorSubject<SensorCapturedData>({} as SensorCapturedData);
   readonly newData: Observable<SensorCapturedData> = this.sample.asObservable();
-  private status = new BehaviorSubject<StatusSummary>(null);
+  private status = new BehaviorSubject<StatusSummary>({} as StatusSummary);
   readonly statusChange: Observable<StatusSummary> = this.status.asObservable();
   private currentStatus: StatusSummary = {
     camera: SensorStatusValue.disabled,
@@ -33,25 +33,25 @@ export class SensorsService {
 
   // TODO: observable
   private networkQuality = null;
-  private document: HTMLDocument;
+  private document: HTMLDocument = {} as HTMLDocument;
 
-  private canvas;
-  private video;
-  private audio;
+  private canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+  private video: ElementRef<HTMLVideoElement> = {} as ElementRef<HTMLVideoElement>;
+  private audio: ElementRef<HTMLAudioElement> = {} as ElementRef<HTMLAudioElement>;
 
   constructor() {
   }
 
-  public setCanvas(canvas) {
-    this.canvas = canvas.first;
+  public setCanvas(canvas:ElementRef<HTMLCanvasElement>) {
+    this.canvas = canvas;
   }
 
-  public setAudio(audio) {
-    this.audio = audio.first;
+  public setAudio(audio: ElementRef<HTMLAudioElement>) {
+    this.audio = audio;
   }
 
-  public setVideo(video) {
-    this.video = video.first;
+  public setVideo(video: ElementRef<HTMLVideoElement>) {
+    this.video = video;
   }
 
   public enableSensors(enabled: Array<SensorCode>): void {
@@ -132,11 +132,11 @@ export class SensorsService {
     }
   }
 
-  public setConfiguration(config) {
-    if (this.webcam) {
+  public setConfiguration(config: Array<SensorConfig>) {
+    if (Object.keys(this.webcam).length != 0) {
       this.webcam.setConfig(config);
     }
-    if (this.keyboard) {
+    if (Object.keys(this.keyboard).length != 0) {
       this.keyboard.setConfig(config);
     }
   }

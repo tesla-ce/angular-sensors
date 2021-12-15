@@ -1,35 +1,35 @@
 import {ElementRef, Injectable, ViewChild, ViewChildren} from '@angular/core';
 import {Subscription, timer} from 'rxjs';
-import {MultiSensor, SensorStatusValue} from './sensor.interfaces';
+import {MultiSensor, SensorEventCode, SensorStatusValue} from './sensor.interfaces';
 import {BlackImageWorker} from './black-image.worker';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SensorWebcamService extends MultiSensor {
-  cameraTimer: Subscription;
-  microphoneTimer: Subscription;
-  videoLabel = null;
+  cameraTimer: Subscription = {} as Subscription;
+  microphoneTimer: Subscription = {} as Subscription;
+  videoLabel = '';
   videoReady = false;
   timeBetweenPictures = 30000;
   timeBetweenAudios = 30000;
   timeAudioSample = 12000;
   result = 0;
 
-  canvas = null;
-  video = null;
-  audio = null;
+  canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+  video: ElementRef<HTMLVideoElement> = {} as ElementRef<HTMLVideoElement>;
+  audio: ElementRef<HTMLAudioElement> = {} as ElementRef<HTMLAudioElement>;
 
   audioLabel = null;
   audioBuffer = {
     recording: false,
     should_stop: false,
-    media_recorder: null,
-    source: null,
-    recorded_chunks: []
+    media_recorder: {} as MediaRecorder,
+    source: {} as MediaStream,
+    recorded_chunks: [] as Array<any>
   };
 
-  private blackWorker = null;
+  private blackWorker: Worker = {} as Worker;
   private inAudioFragment = false;
   private workersAvailaible = true;
 
@@ -86,7 +86,8 @@ export class SensorWebcamService extends MultiSensor {
     });
   }
 
-  public setupDOMElements(audio, canvas, video): void {
+  public setupDOMElements(audio: ElementRef<HTMLAudioElement>, canvas: ElementRef<HTMLCanvasElement>,
+                          video: ElementRef<HTMLVideoElement>): void {
     this.audio = audio;
     this.canvas = canvas;
     this.video = video;
@@ -94,6 +95,9 @@ export class SensorWebcamService extends MultiSensor {
 
   private takePicture(): void {
     const canvasContext = this.canvas.nativeElement.getContext('2d');
+    if (canvasContext === null) {
+      throw "Canvas context is null";
+    }
     // check black image & send or alert
     const wTc = this.canvas.nativeElement.width;
     const hTc = this.canvas.nativeElement.height;
@@ -143,12 +147,14 @@ export class SensorWebcamService extends MultiSensor {
     this.inAudioFragment = true;
     */
     console.log('startAudioFragmentCapture');
+    // @ts-ignore: Object is possibly 'null'.
     this.audioBuffer.media_recorder.start();
   }
 
   protected endAudioFragmentCapture() {
     console.log('endAudioFragmentCapture');
     if (this.audioBuffer.recording === true) {
+      // @ts-ignore: Object is possibly 'null'.
       this.audioBuffer.media_recorder.stop();
     }
     // this.audioBuffer.should_stop = true;
@@ -178,7 +184,7 @@ export class SensorWebcamService extends MultiSensor {
     }
   }
 
-  private startWebcam(constrains) {
+  private startWebcam(constrains: MediaStreamConstraints) {
     // Check browser compatibility
     if(navigator.mediaDevices === undefined || navigator.mediaDevices.getUserMedia === undefined)  {
       console.log('Browser not supported');
@@ -200,6 +206,11 @@ export class SensorWebcamService extends MultiSensor {
 
           this.audioBuffer.source = stream;
           this.audioBuffer.media_recorder = new MediaRecorder(stream, options);
+
+          if (this.audioBuffer.media_recorder === null) {
+            throw "Audio buffer is null";
+          }
+
           this.audioBuffer.recorded_chunks = [];
           this.audioBuffer.recording = false;
           this.audioBuffer.should_stop = false;
@@ -213,8 +224,8 @@ export class SensorWebcamService extends MultiSensor {
             });
             this.setStatus('microphone', SensorStatusValue.ok);
           }
-
-          this.audioBuffer.media_recorder.addEventListener('dataavailable', e => {
+          // @ts-ignore: Object is possibly 'null'.
+          this.audioBuffer.media_recorder.addEventListener('dataavailable', (e: EventHandler) => {
             if (e.data.size > 0) {
               this.audioBuffer.recorded_chunks.push(e.data);
             }
@@ -285,7 +296,7 @@ export class SensorWebcamService extends MultiSensor {
     }, false);
   }
 
-  private newWebcamEvent(level, code) {
+  private newWebcamEvent(level: SensorEventCode, code: string) {
     console.log('New webcam event throw it');
     console.log(level, code);
     if (this.enabledSensors.includes('camera')) {
@@ -297,4 +308,3 @@ export class SensorWebcamService extends MultiSensor {
     }
   }
 }
-

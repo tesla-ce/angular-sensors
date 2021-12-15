@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Sensor, SensorStatusValue} from './sensor.interfaces';
 import {Observable, fromEvent, Subscription} from 'rxjs';
 import {SensorsComponent} from './sensors.component';
-import {TeslaKeyboard} from './tesla-keyboard';
+// import {TeslaKeyboard} from './tesla-keyboard';
 
 export interface KeyEvent {
   when: Date;
@@ -11,16 +11,19 @@ export interface KeyEvent {
   event: 'keyup' | 'keydown';
 }
 
+export interface Features {
+  features: Array<any>
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class SensorKeyboardService extends Sensor {
-  private keyEvents: Subscription;
-  private keyboard: TeslaKeyboard;
-  private lastDownWasSpace: boolean;
-  private lastUpWasSpace: boolean;
-  private subscriptionUp: Subscription;
-  private subscriptionDown: Subscription;
+  // private keyboard: TeslaKeyboard = {};
+  // private lastDownWasSpace: boolean;
+  // private lastUpWasSpace: boolean;
+  private subscriptionUp: Subscription = {} as Subscription;
+  private subscriptionDown: Subscription  = {} as Subscription;
   private recording: boolean;
   private buffer: Array<{}>;
   private DWELL = 1;
@@ -28,15 +31,15 @@ export class SensorKeyboardService extends Sensor {
   private DIGRAPH = 3;
   private TRIGRAPH = 4;
   private FOURGRAPH = 5;
-  private features = {"features": []};
+  private features: Features = {"features": []};
   private MAX_BUFFER_LENGTH = 250;
 
   constructor() {
     super();
 
-    this.keyboard = new TeslaKeyboard();
-    this.lastDownWasSpace = false;
-    this.lastUpWasSpace = false;
+    // this.keyboard = new TeslaKeyboard();
+    // this.lastDownWasSpace = false;
+    // this.lastUpWasSpace = false;
     this.recording = false;
     this.buffer = [];
     this.code = 'keyboard';
@@ -51,12 +54,12 @@ export class SensorKeyboardService extends Sensor {
     // events {keycode, keyValue, timestamp, type}
     // 512 -> envio
 
-    this.subscriptionUp = fromEvent(document, 'keyup').subscribe((ev: KeyboardEvent) => {
-      return this.onKeyUp(ev);
+    this.subscriptionUp = fromEvent(document, 'keyup').subscribe((ev: Event) => {
+      return this.onKeyUp(ev as KeyboardEvent);
     });
 
-    this.subscriptionDown = fromEvent(document, 'keydown').subscribe((ev: KeyboardEvent) => {
-      return this.onKeyDown(ev);
+    this.subscriptionDown = fromEvent(document, 'keydown').subscribe((ev: Event) => {
+      return this.onKeyDown(ev as KeyboardEvent);
     })
 
     super.start();
@@ -112,16 +115,16 @@ export class SensorKeyboardService extends Sensor {
   }
 
   private constructFeatures() {
-    const auxBuffer = this.buffer;
+    const auxBuffer: Array<{}> = this.buffer;
     this.buffer = [];
 
-    let auxDwell = {};
-    let auxFlight = {};
-    let auxKeyBuffer = {"keyup": [], "keydown": []};
+    let auxDwell: any = {};
+    let auxFlight: any = {};
+    let auxKeyBuffer: any = {"keyup": [], "keydown": []};
 
     // process DWELL
     for(let i=0; i < auxBuffer.length; i++) {
-      const row = auxBuffer[i];
+      const row: any = auxBuffer[i];
       if ((auxDwell[row['code']] === undefined || Object.keys(auxDwell[row['code']]).length === 0) && row['type'] === 'keydown') {
         auxDwell[row['code']] = {};
         auxDwell[row['code']]['keydown'] = row['timestamp'];
@@ -140,7 +143,7 @@ export class SensorKeyboardService extends Sensor {
 
     // process FLIGHT
     for(let i=0; i < auxBuffer.length; i++) {
-      const row = auxBuffer[i];
+      const row: any = auxBuffer[i];
 
       if (row['type'] === 'keyup') {
         auxFlight = {
@@ -163,7 +166,7 @@ export class SensorKeyboardService extends Sensor {
 
     // separate events inside two buffers
     for(let i=0; i < auxBuffer.length; i++) {
-      const row = auxBuffer[i];
+      const row: any = auxBuffer[i];
       auxKeyBuffer[row['type']].push({"code": row['code'], "timestamp": row['timestamp']});
     }
 
@@ -177,8 +180,8 @@ export class SensorKeyboardService extends Sensor {
     this.processXGraph(auxKeyBuffer, 3);
   }
 
-  private processXGraph(auxKeyBuffer, idx) {
-    let aux_type = null;
+  private processXGraph(auxKeyBuffer: any, idx: number) {
+    let aux_type: number;
 
     switch(idx) {
       case 1:
@@ -190,17 +193,20 @@ export class SensorKeyboardService extends Sensor {
       case 3:
         aux_type = this.FOURGRAPH;
         break;
+      default:
+        aux_type = 0;
+        break;
     }
 
     for(let i=0; i < auxKeyBuffer['keydown'].length; i++) {
-      const row_down = auxKeyBuffer['keydown'][i];
+      const row_down: any = auxKeyBuffer['keydown'][i];
 
       if (auxKeyBuffer['keyup'][i+idx] === undefined) {
         break;
       }
-      const row_up = auxKeyBuffer['keyup'][i+idx];
+      const row_up: any = auxKeyBuffer['keyup'][i+idx];
 
-      const auxFeature = {
+      const auxFeature: any = {
         'code': row_down['code']+'___'+row_up['code'],
         'type': aux_type,
         'time': row_up['timestamp'] - row_down['timestamp']

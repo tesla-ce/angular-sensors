@@ -1,5 +1,5 @@
-export class BlackImageWorker {
-  processImage = function(evt) {
+export class BlackImageWorker{
+  processImage = function(evt: any) {
     console.log('start check black image');
 
     const THRESHOLD_BRIGHTNESS = 30;
@@ -25,6 +25,6 @@ export class BlackImageWorker {
       black = true;
     }
 
-    this.postMessage({black, dataToSend});
+    postMessage({black, dataToSend}, '*');
   };
 }
