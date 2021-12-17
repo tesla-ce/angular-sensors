@@ -1,15 +1,11 @@
 export class BlackImageWorker implements Worker{
   onmessage(evt: any) {
-    console.log('onmessage');
   }
 
   onmessageerror(evt: any) {
-    console.log("onmessageerror");
   }
 
   postMessage(evt: any) {
-    console.log(evt);
-    console.log("postMessage");
     console.log('start check black image');
 
     const THRESHOLD_BRIGHTNESS = 30;
@@ -39,29 +35,18 @@ export class BlackImageWorker implements Worker{
   }
 
   terminate() {
-    console.log("terminate");
   }
 
   addEventListener(evt: any) {
-    console.log("addEventListener");
   }
 
   removeEventListener(evt: any) {
-    console.log("removeEventListener");
   }
 
   dispatchEvent(evt: Event): boolean {
-    console.log("dispatchEvent");
     return true;
   }
 
   onerror(evt: any) {
-    console.log("onerror");
   }
-  /*
-  processImage = function(evt: any) {
-
-  };
-
-   */
 }
