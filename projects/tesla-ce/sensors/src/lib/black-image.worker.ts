@@ -1,13 +1,23 @@
-export class BlackImageWorker{
-  processImage = function(evt: any) {
+export class BlackImageWorker implements Worker{
+  onmessage(evt: any) {
+    console.log('onmessage');
+  }
+
+  onmessageerror(evt: any) {
+    console.log("onmessageerror");
+  }
+
+  postMessage(evt: any) {
+    console.log(evt);
+    console.log("postMessage");
     console.log('start check black image');
 
     const THRESHOLD_BRIGHTNESS = 30;
 
-    const data = evt.data.data;
-    const wTc = evt.data.wTc;
-    const hTc = evt.data.hTc;
-    const dataToSend = evt.data.dataToSend;
+    const data = evt.data;
+    const wTc = evt.wTc;
+    const hTc = evt.hTc;
+    const dataToSend = evt.dataToSend;
 
     let black = false;
     let colorSum = 0;
@@ -25,6 +35,33 @@ export class BlackImageWorker{
       black = true;
     }
 
-    postMessage({black, dataToSend}, '*');
+    this.onmessage({black, dataToSend});
+  }
+
+  terminate() {
+    console.log("terminate");
+  }
+
+  addEventListener(evt: any) {
+    console.log("addEventListener");
+  }
+
+  removeEventListener(evt: any) {
+    console.log("removeEventListener");
+  }
+
+  dispatchEvent(evt: Event): boolean {
+    console.log("dispatchEvent");
+    return true;
+  }
+
+  onerror(evt: any) {
+    console.log("onerror");
+  }
+  /*
+  processImage = function(evt: any) {
+
   };
+
+   */
 }

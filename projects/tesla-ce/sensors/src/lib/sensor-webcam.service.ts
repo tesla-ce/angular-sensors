@@ -46,11 +46,8 @@ export class SensorWebcamService extends MultiSensor {
     // https://blog.logrocket.com/how-to-execute-a-function-with-a-web-worker-on-a-different-thread-in-angular/
     if (typeof Worker !== 'undefined') {
       // Create a new
-      const biw = new BlackImageWorker();
-      const blob = new Blob(['(this.onmessage=', biw.processImage.toString(), ')'], { type: 'text/javascript' });
-      this.blackWorker = new Worker((<any>window).URL.createObjectURL(blob));
-
-      this.blackWorker.onmessage = ({data}) => {
+      this.blackWorker = new BlackImageWorker();
+      this.blackWorker.onmessage = (data: any) => {
         if (data.black === true) {
           console.log('Back image detected');
           this.setStatus('camera', SensorStatusValue.warning);
