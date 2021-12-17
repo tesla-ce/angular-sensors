@@ -27,12 +27,18 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "types": ["dom-mediacapture-record", "jest"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "types": [
+      "node",
+      "dom-mediacapture-record",
+      "jest"
+    ]
   }
 }

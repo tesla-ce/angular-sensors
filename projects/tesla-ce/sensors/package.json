@@ -11,5 +11,8 @@
     "tslib": "^2.2.0"
   },
   "licence": "AGPLv3",
-  "author": "Roger Muñoz Bernaus <rmunoz@uoc.edu>"
+  "author": "Roger Muñoz Bernaus <rmunoz@uoc.edu>",
+  "devDependencies": {
+    "@types/dom-mediacapture-record": "^1.0.11"
+  }
 }
