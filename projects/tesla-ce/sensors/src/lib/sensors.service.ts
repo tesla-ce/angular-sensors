@@ -115,19 +115,19 @@ export class SensorsService {
   }
 
   public start() {
-    if (this.webcam) {
+    if (Object.keys(this.webcam).length !=0) {
       this.webcam.start();
     }
-    if (this.keyboard) {
+    if (Object.keys(this.keyboard).length != 0) {
       this.keyboard.start();
     }
   }
 
   public stop() {
-    if (this.webcam) {
+    if (Object.keys(this.webcam).length !=0) {
       this.webcam.stop();
     }
-    if (this.keyboard) {
+    if (Object.keys(this.keyboard).length != 0) {
       this.keyboard.stop();
     }
   }
