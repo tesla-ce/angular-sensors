@@ -41,6 +41,7 @@ export abstract class Sensor {
   public readonly statusChange = this.status.asObservable();
   private event = new BehaviorSubject<SensorEvent>({} as SensorEvent);
   public readonly eventChange = this.event.asObservable();
+
   private running = false;
   protected code: SensorCode = {} as SensorCode;
   private sample = new BehaviorSubject<SensorCapturedData>({} as SensorCapturedData);

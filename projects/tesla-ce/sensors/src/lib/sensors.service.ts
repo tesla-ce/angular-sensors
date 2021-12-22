@@ -22,6 +22,10 @@ export class SensorsService {
   private keyboard: SensorKeyboardService = {} as SensorKeyboardService;
   private sample = new BehaviorSubject<SensorCapturedData>({} as SensorCapturedData);
   readonly newData: Observable<SensorCapturedData> = this.sample.asObservable();
+
+  private event = new BehaviorSubject<SensorEvent>({} as SensorEvent);
+  readonly eventChange = this.event.asObservable();
+
   private status = new BehaviorSubject<StatusSummary>({} as StatusSummary);
   readonly statusChange: Observable<StatusSummary> = this.status.asObservable();
   private currentStatus: StatusSummary = {
@@ -83,10 +87,7 @@ export class SensorsService {
       this.status.next(Object.assign({}, this.currentStatus));
 
       this.webcam.eventChange.subscribe( event => {
-        if (event) {
-          // todo something with event
-          // this.event.next(Object.assign({}, event));
-        }
+        this.event.next(Object.assign({}, event));
       });
     }
     if (this.enabledSensors.includes('keyboard')) {
@@ -102,10 +103,7 @@ export class SensorsService {
         }
       });
       this.keyboard.eventChange.subscribe( event => {
-        if (event) {
-          // todo something with event
-          // this.event.next(Object.assign({}, event));
-        }
+        this.event.next(Object.assign({}, event));
       });
     }
   }
