@@ -1,11 +1,11 @@
 {
   "name": "@tesla-ce/sensors",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "peerDependencies": {
     "@angular/common": "^12.1.0",
     "@angular/core": "^12.1.0",
     "@types/dom-mediacapture-record": "^1.0.11",
-    "rxjs": "~6.6.0"
+    "rxjs": "^6.6.0"
   },
   "dependencies": {
     "tslib": "^2.2.0"
